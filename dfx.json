@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "icrc2-wallet-backend": {
+      "candid": "src/icrc2-wallet-backend/icrc2-wallet-backend.did",
+      "package": "icrc2-wallet-backend",
+      "type": "rust"
+    },
+    "icrc2-wallet-frontend": {
+      "dependencies": [
+        "icrc2-wallet-backend"
+      ],
+      "source": [
+        "src/icrc2-wallet-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "icrc2-wallet-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
