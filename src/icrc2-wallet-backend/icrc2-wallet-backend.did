@@ -1,3 +1,24 @@
+type Account = record { 
+  owner : principal;
+  subaccount : opt vec nat8
+  };
+
+type Result = variant { 
+  Ok : nat;
+  Err : text
+  };
+
+type TransferArgs = record { 
+  ledger_canister: text;
+  to_account : Account; 
+  amount : nat };
+
+type BalanceInputArg = record {
+  ledger_canister: text;
+  owner: Account
+  };
+
 service : {
-    "greet": (text) -> (text) query;
+  transfer : (TransferArgs) -> (Result);
+  get_balance: (text, Account) -> (Result) query;
 }
