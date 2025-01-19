@@ -9,6 +9,12 @@ pub struct TransferInputArg {
     to_account: Account,
 }
 
+#[derive(CandidType, Deserialize, Serialize)]
+pub struct BalanceInputArg {
+    canister: Principal,
+    owner: Account,
+}
+
 #[ic_cdk::update]
 async fn transfer(args: TransferInputArg) -> Result<BlockIndex, String> {
     ic_cdk::println!(
@@ -35,4 +41,16 @@ async fn transfer(args: TransferInputArg) -> Result<BlockIndex, String> {
     .map_err(|e| format!("ledger not found: {:?}", e))?
     .0
     .map_err(|e| format!("ledger transfer failed:  {:?}", e))
+}
+
+#[ic_cdk::query]
+async fn get_balance(args: BalanceInputArg) -> Result<u128, String> {
+    let account = args.owner;
+    let result: Result<(u128,), _> =
+        ic_cdk::call(args.canister, "icrc1_balance_of", (account,)).await;
+
+    match result {
+        Ok((balance,)) => Ok(balance),
+        Err(e) => Err(format!("Error fetching balance: {:?}", e)),
+    }
 }
