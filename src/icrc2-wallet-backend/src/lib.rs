@@ -5,14 +5,14 @@ use serde::Serialize;
 
 #[derive(CandidType, Deserialize, Serialize)]
 pub struct TransferInputArg {
-    token_canister: Principal,
+    ledger_canister: String,
     amount: NumTokens,
     to_account: Account,
 }
 
 #[derive(CandidType, Deserialize, Serialize)]
 pub struct BalanceInputArg {
-    ledger_canister: Principal,
+    ledger_canister: String,
     owner: Account,
 }
 
@@ -34,7 +34,7 @@ async fn transfer(args: TransferInputArg) -> Result<BlockIndex, String> {
     };
 
     ic_cdk::call::<(TransferArg,), (Result<BlockIndex, TransferError>,)>(
-        args.token_canister,
+        Principal::from_text(args.ledger_canister).expect("couldn't decode principal"),
         "icrc1_transfer",
         (transfer_args,),
     )
