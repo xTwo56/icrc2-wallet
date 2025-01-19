@@ -5,13 +5,14 @@ use serde::Serialize;
 
 #[derive(CandidType, Deserialize, Serialize)]
 pub struct TransferInputArg {
+    token_canister: Principal,
     amount: NumTokens,
     to_account: Account,
 }
 
 #[derive(CandidType, Deserialize, Serialize)]
 pub struct BalanceInputArg {
-    canister: Principal,
+    ledger_canister: Principal,
     owner: Account,
 }
 
@@ -33,7 +34,7 @@ async fn transfer(args: TransferInputArg) -> Result<BlockIndex, String> {
     };
 
     ic_cdk::call::<(TransferArg,), (Result<BlockIndex, TransferError>,)>(
-        Principal::from_text("").expect("Could not decode the principal."),
+        args.token_canister,
         "icrc1_transfer",
         (transfer_args,),
     )
@@ -43,14 +44,18 @@ async fn transfer(args: TransferInputArg) -> Result<BlockIndex, String> {
     .map_err(|e| format!("ledger transfer failed:  {:?}", e))
 }
 
-#[ic_cdk::query]
-async fn get_balance(args: BalanceInputArg) -> Result<u128, String> {
-    let account = args.owner;
-    let result: Result<(u128,), _> =
-        ic_cdk::call(args.canister, "icrc1_balance_of", (account,)).await;
+#[ic_cdk::query(composite = true)]
+async fn get_balance(ledger_canister: String, account: Account) -> Result<u128, String> {
+    let result: Result<(u128,), _> = ic_cdk::call(
+        Principal::from_text(ledger_canister).expect("Could not decode principal"),
+        "icrc1_balance_of",
+        (account,),
+    )
+    .await;
 
     match result {
         Ok((balance,)) => Ok(balance),
         Err(e) => Err(format!("Error fetching balance: {:?}", e)),
     }
 }
+ic_cdk::export_candid!();
