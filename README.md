@@ -35,6 +35,15 @@ chmod +x <path/to/script>
 ./<path/to/script>
 ```
 
+
+To get the principals of all the accounts in the local ledger, Run the `list_principals.sh` file:
+
+   ```bash
+   chmod +x /path/to/script
+   ./path/to/script
+   ```
+   
+
 Once the job completes, the application will be available at:
 
 ```
