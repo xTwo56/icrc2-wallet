@@ -58,4 +58,5 @@ async fn get_balance(ledger_canister: String, account: Account) -> Result<u128, 
         Err(e) => Err(format!("Error fetching balance: {:?}", e)),
     }
 }
+
 ic_cdk::export_candid!();
